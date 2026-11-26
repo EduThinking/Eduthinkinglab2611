@@ -1,12 +1,10 @@
 /* ==========================================================================
    에듀씽킹연구소 — EDUTHINKING LAB
-   Interactions: mobile nav, scroll state, reveal, copy email, contact config
+   Header state · mobile nav · section highlight · reveal · email copy · to-top
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 연락처 설정
-   공식 연락처·채널이 생기면 이 객체만 수정하면 페이지 전체에 반영됩니다.
-   channels 예시:
+   연락처 설정 — 공식 채널이 생기면 channels에 추가하면 푸터/문의 영역에 반영됩니다.
      { label: '인스타그램', url: 'https://instagram.com/eduthinking' }
    -------------------------------------------------------------------------- */
 const SITE_CONTACT = {
@@ -15,14 +13,11 @@ const SITE_CONTACT = {
 };
 
 const SITE = (() => {
-  const html = document.documentElement;
-  html.classList.add('js');
-
   const header = document.getElementById('siteHeader');
   const nav = document.getElementById('primaryNav');
   const navToggle = document.getElementById('navToggle');
-  const progress = document.getElementById('scrollProgress');
   const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+  const floatTop = document.getElementById('floatTop');
   const toast = document.getElementById('toast');
 
   /* ---------- Mobile navigation ---------- */
@@ -32,7 +27,7 @@ const SITE = (() => {
     navToggle.classList.remove('is-open');
     navToggle.setAttribute('aria-expanded', 'false');
     navToggle.setAttribute('aria-label', '메뉴 열기');
-    document.body.style.overflow = '';
+    document.body.classList.remove('nav-open');
   };
 
   const openNav = () => {
@@ -40,10 +35,10 @@ const SITE = (() => {
     navToggle.classList.add('is-open');
     navToggle.setAttribute('aria-expanded', 'true');
     navToggle.setAttribute('aria-label', '메뉴 닫기');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('nav-open');
   };
 
-  if (navToggle && nav) {
+  if (nav && navToggle) {
     navToggle.addEventListener('click', () => {
       nav.classList.contains('is-open') ? closeNav() : openNav();
     });
@@ -59,50 +54,35 @@ const SITE = (() => {
       }
     });
 
-    document.addEventListener('click', (event) => {
-      if (!nav.classList.contains('is-open')) return;
-      if (nav.contains(event.target) || navToggle.contains(event.target)) return;
-      closeNav();
-    });
-
     window.addEventListener('resize', () => {
       if (window.innerWidth > 920) closeNav();
     });
   }
 
-  /* ---------- Header state + scroll progress ---------- */
-  const sections = [
-    { id: 'philosophy', link: navLinks[0] },
-    { id: 'services', link: navLinks[1] },
-    { id: 'difference', link: navLinks[2] },
-    { id: 'audience', link: navLinks[3] },
-    { id: 'contact', link: null }
-  ];
+  /* ---------- Header state + section highlight + to-top ---------- */
+  const sections = navLinks
+    .map((link) => {
+      const id = link.getAttribute('href').replace('#', '');
+      const el = document.getElementById(id);
+      return el ? { el, link } : null;
+    })
+    .filter(Boolean);
 
   let ticking = false;
 
   const onScroll = () => {
     const y = window.scrollY || 0;
 
-    if (header) {
-      header.classList.toggle('is-scrolled', y > 12);
-    }
+    if (header) header.classList.toggle('is-scrolled', y > 8);
 
-    if (progress) {
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const ratio = docHeight > 0 ? Math.min(y / docHeight, 1) : 0;
-      progress.style.width = (ratio * 100).toFixed(2) + '%';
-    }
-
+    // 현재 보고 있는 섹션 표시
     let currentId = '';
-    sections.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el && el.getBoundingClientRect().top <= 140) currentId = id;
+    sections.forEach(({ el }) => {
+      if (el.getBoundingClientRect().top <= 160) currentId = el.id;
     });
 
-    sections.forEach(({ id, link }) => {
-      if (!link) return;
-      const isActive = id === currentId;
+    sections.forEach(({ el, link }) => {
+      const isActive = el.id === currentId;
       link.classList.toggle('active', isActive);
       if (isActive) {
         link.setAttribute('aria-current', 'true');
@@ -110,6 +90,19 @@ const SITE = (() => {
         link.removeAttribute('aria-current');
       }
     });
+
+    if (floatTop) {
+      const show = y > 640;
+      if (show && floatTop.hidden) {
+        floatTop.hidden = false;
+        window.requestAnimationFrame(() => floatTop.classList.add('is-visible'));
+      } else if (!show && !floatTop.hidden) {
+        floatTop.classList.remove('is-visible');
+        window.setTimeout(() => {
+          if (window.scrollY <= 640) floatTop.hidden = true;
+        }, 320);
+      }
+    }
 
     ticking = false;
   };
@@ -126,11 +119,17 @@ const SITE = (() => {
   );
   onScroll();
 
+  if (floatTop) {
+    floatTop.addEventListener('click', () => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  }
+
   /* ---------- Reveal on scroll ---------- */
   const revealTargets = Array.from(document.querySelectorAll('.reveal'));
 
   if ('IntersectionObserver' in window && revealTargets.length) {
-    // 같은 그룹 안에서는 순차적으로 나타나도록 지연을 준다.
     revealTargets.forEach((el) => {
       const parent = el.parentElement;
       if (!parent) return;
@@ -150,7 +149,7 @@ const SITE = (() => {
           }
         });
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+      { rootMargin: '0px 0px -6% 0px', threshold: 0.06 }
     );
 
     revealTargets.forEach((el) => observer.observe(el));
@@ -161,26 +160,13 @@ const SITE = (() => {
   /* ---------- Contact: config -> page ---------- */
   document.querySelectorAll('[data-contact-email]').forEach((el) => {
     el.setAttribute('href', 'mailto:' + SITE_CONTACT.email);
-    if (el.hasAttribute('data-contact-email-text') || el.tagName !== 'A') {
+    const textEl = el.querySelector('[data-contact-email-text]');
+    if (textEl) {
+      textEl.textContent = SITE_CONTACT.email;
+    } else if (el.tagName !== 'A') {
       el.textContent = SITE_CONTACT.email;
     }
   });
-
-  const channelList = document.querySelector('[data-contact-channels]');
-  if (channelList && Array.isArray(SITE_CONTACT.channels) && SITE_CONTACT.channels.length) {
-    channelList.innerHTML = '';
-    SITE_CONTACT.channels.forEach(({ label, url }) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = url;
-      a.textContent = label;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      li.appendChild(a);
-      channelList.appendChild(li);
-    });
-    channelList.hidden = false;
-  }
 
   /* ---------- Copy email ---------- */
   let toastTimer = null;
@@ -189,8 +175,8 @@ const SITE = (() => {
     if (!toast) return;
     toast.textContent = message;
     toast.classList.add('is-visible');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2400);
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => toast.classList.remove('is-visible'), 2400);
   };
 
   const copyEmailButton = document.getElementById('copyEmail');

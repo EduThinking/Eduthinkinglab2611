@@ -9,14 +9,15 @@
 
 ```
 eduthinking-site/
-├── index.html                  # 페이지 본문 (섹션 6개 + 헤더/푸터)
+├── index.html                  # 페이지 본문 (Hero · About · Service · Process · Audience · Contact)
 ├── styles.css                  # 디자인 토큰·레이아웃·반응형·모션
-├── script.js                   # 모바일 메뉴, 스크롤 상태, 등장 애니메이션, 메일 복사
+├── script.js                   # 모바일 메뉴, 섹션 하이라이트, 등장 애니메이션, 메일 복사, 맨 위로
 ├── assets/
-│   ├── hero-design-thinking.png / .webp   # 히어로 일러스트
-│   ├── problem-gap.png / .webp            # 문제 대비 일러스트
-│   ├── bm-framework.png / .webp           # 4단계 프레임워크 일러스트
-│   └── og-image.jpg                       # SNS 공유 미리보기(1200×630)
+│   ├── photo-hero.png / .webp      # 히어로 실사 인물 사진
+│   ├── photo-workshop.png / .webp  # 디자인씽킹 워크숍 실사
+│   ├── photo-bm.png / .webp        # 비즈니스 모델 설계 실사
+│   ├── photo-lecture.png / .webp   # 실전 교육·강의 실사
+│   └── og-image.jpg                # SNS 공유 미리보기(1200×630, 히어로 사진 기반)
 ├── preview-top.png             # 상단 미리보기
 └── preview-full.png            # 전체 스크롤 미리보기
 ```
@@ -59,8 +60,9 @@ git push origin main:gh-pages
 
 ## 디자인 메모
 
-- **컬러**: 딥 네이비 `#16213E`, 오프화이트 `#F8FAFC` / `#F1F5F9`, 포인트 에메랄드 `#0D9488` · 코랄 `#F97316`
-- **타이포**: Pretendard(CDN) → Noto Sans KR → 시스템 폰트 순으로 대체
-- **일러스트**: AI 생성 이미지 3장, 동물 캐릭터 없이 플랫/아이소메트릭 톤 통일
-- **모션**: `prefers-reduced-motion`에서 애니메이션 비활성화
-- **접근성**: 건너뛰기 링크, 키보드 포커스 표시, 모바일 메뉴 `aria-expanded`, 이미지 대체 텍스트
+- **컨셉**: 아임웹 *Benuity* 템플릿을 참고한 화이트 · 소프트 쿨그레이 · 딥 차콜 중심의 미니멀 컨설팅 펌 스타일
+- **컬러**: 화이트 `#FFFFFF`, 페이퍼 `#F7F9FA`, 미스트 `#EAF0F2`(히어로 `#EBF0F3`), 딥 차콜 `#111827` / `#0B1118`
+- **타이포**: Pretendard Variable(CDN) → 시스템 폰트 순으로 대체, 큰 제목은 600 굵기·타이트한 자간
+- **사진**: AI 생성 실사 이미지 4장(인물·워크숍·BM 회의·강의), `<picture>`로 WebP 우선 로딩
+- **모션**: 스크롤 등장(IntersectionObserver)만 사용, `prefers-reduced-motion`에서 비활성화
+- **접근성**: 건너뛰기 링크, 키보드 포커스 표시, 모바일 메뉴 `aria-expanded`, 이미지 대체 텍스트, 비교표 `role=table`
