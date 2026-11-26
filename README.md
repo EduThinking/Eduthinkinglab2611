@@ -9,7 +9,7 @@
 
 ```
 eduthinking-site/
-├── index.html                  # 페이지 본문 (Hero · About · Service · Process · Audience · Contact)
+├── index.html                  # 페이지 본문 (Hero · About · Service(TOCfE 5개 워크숍) · Process · Audience · Contact)
 ├── styles.css                  # 디자인 토큰·레이아웃·반응형·모션
 ├── script.js                   # 모바일 메뉴, 섹션 하이라이트, 등장 애니메이션, 메일 복사, 맨 위로
 ├── assets/
@@ -64,6 +64,6 @@ git push origin main:gh-pages
 - **컬러**: 화이트 `#FFFFFF`, 페이퍼 `#F7F9FA`, 미스트 `#EAF0F2`(히어로 `#EBF0F3`), 딥 차콜 `#111827` / `#0B1118`
 - **타이포**: Pretendard Variable(CDN) → 시스템 폰트 순으로 대체, 큰 제목은 600 굵기·타이트한 자간
 - **사진**: AI 생성 실사 이미지 4장(회의실 전경·오버헤드 워크숍 테이블·BM 데스크·강연장 뒷모습) — 정면 얼굴 클로즈업 없이 손·문서·전경 중심, `<picture>`로 WebP 우선 로딩
-- **히어로**: 풀블리드 배경 사진 + 차콜 그라데이션 오버레이 + 흰색 타이포·버튼(문제해결파트너스·디자인씽킹연구소 사이트 톤 참고)
+- **히어로**: 풀블리드 배경 사진 + 차콜 그라데이션 오버레이 + 흰색 타이포·버튼(문제해결파트너스·디자인씽킹연구소 사이트 톤 참고)- **TOCfE 워크숍**: 핵심 영역 카드 아래에 5개 과정(갈등관리 및 설득 프로세스 · 목표수립 · 청소년의 문제해결능력 함양 · 에세이 쓰기 · 조직의 문제해결)을 번호 목록으로 정리하고, 주요 대상 카드마다 관련 과정을 한 줄로 연결
 - **모션**: 스크롤 등장(IntersectionObserver)만 사용, `prefers-reduced-motion`에서 비활성화
 - **접근성**: 건너뛰기 링크, 키보드 포커스 표시, 모바일 메뉴 `aria-expanded`, 이미지 대체 텍스트, 비교표 `role=table`
